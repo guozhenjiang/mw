@@ -1,0 +1,9 @@
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\bin\Debug\mw_nuc121_bin_add_len.exe.config
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\bin\Debug\mw_nuc121_bin_add_len.exe
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\bin\Debug\mw_nuc121_bin_add_len.pdb
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\obj\Debug\mw_nuc121_bin_add_len.FormMain.resources
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\obj\Debug\mw_nuc121_bin_add_len.Properties.Resources.resources
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\obj\Debug\mw_nuc121_bin_add_len.csproj.GenerateResource.Cache
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\obj\Debug\mw_nuc121_bin_add_len.csproj.CoreCompileInputs.cache
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\obj\Debug\mw_nuc121_bin_add_len.exe
+D:\Program_Data\VisualStudio_2017\Projects\mw_nuc121_bin_add_len\mw_nuc121_bin_add_len\obj\Debug\mw_nuc121_bin_add_len.pdb
