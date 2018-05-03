@@ -32,12 +32,12 @@
             this.tb_file = new System.Windows.Forms.TextBox();
             this.bt_file_sel = new System.Windows.Forms.Button();
             this.groupBox_CRC32 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tb_crc32_init_val = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tb_crc32_poly = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.tb_crc32_val = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tb_crc32_poly = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tb_crc32_init_val = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.bt_run_crc = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tb_file_len = new System.Windows.Forms.TextBox();
@@ -57,6 +57,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tb_crc16_val = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox_CRC32.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -83,6 +85,7 @@
             this.bt_file_sel.TabIndex = 1;
             this.bt_file_sel.Text = "选择文件";
             this.bt_file_sel.UseVisualStyleBackColor = true;
+            this.bt_file_sel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.bt_file_sel_MouseClick);
             // 
             // groupBox_CRC32
             // 
@@ -99,39 +102,13 @@
             this.groupBox_CRC32.TabStop = false;
             this.groupBox_CRC32.Text = "CRC_32";
             // 
-            // label1
+            // tb_crc32_val
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "初始值";
-            // 
-            // tb_crc32_init_val
-            // 
-            this.tb_crc32_init_val.Location = new System.Drawing.Point(53, 14);
-            this.tb_crc32_init_val.Name = "tb_crc32_init_val";
-            this.tb_crc32_init_val.Size = new System.Drawing.Size(125, 21);
-            this.tb_crc32_init_val.TabIndex = 1;
-            this.tb_crc32_init_val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "多项式";
-            // 
-            // tb_crc32_poly
-            // 
-            this.tb_crc32_poly.Location = new System.Drawing.Point(53, 41);
-            this.tb_crc32_poly.Name = "tb_crc32_poly";
-            this.tb_crc32_poly.Size = new System.Drawing.Size(125, 21);
-            this.tb_crc32_poly.TabIndex = 1;
-            this.tb_crc32_poly.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tb_crc32_val.Location = new System.Drawing.Point(53, 68);
+            this.tb_crc32_val.Name = "tb_crc32_val";
+            this.tb_crc32_val.Size = new System.Drawing.Size(125, 21);
+            this.tb_crc32_val.TabIndex = 1;
+            this.tb_crc32_val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label3
             // 
@@ -142,13 +119,39 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "结  果";
             // 
-            // tb_crc32_val
+            // tb_crc32_poly
             // 
-            this.tb_crc32_val.Location = new System.Drawing.Point(53, 68);
-            this.tb_crc32_val.Name = "tb_crc32_val";
-            this.tb_crc32_val.Size = new System.Drawing.Size(125, 21);
-            this.tb_crc32_val.TabIndex = 1;
-            this.tb_crc32_val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tb_crc32_poly.Location = new System.Drawing.Point(53, 41);
+            this.tb_crc32_poly.Name = "tb_crc32_poly";
+            this.tb_crc32_poly.Size = new System.Drawing.Size(125, 21);
+            this.tb_crc32_poly.TabIndex = 1;
+            this.tb_crc32_poly.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "多项式";
+            // 
+            // tb_crc32_init_val
+            // 
+            this.tb_crc32_init_val.Location = new System.Drawing.Point(53, 14);
+            this.tb_crc32_init_val.Name = "tb_crc32_init_val";
+            this.tb_crc32_init_val.Size = new System.Drawing.Size(125, 21);
+            this.tb_crc32_init_val.TabIndex = 1;
+            this.tb_crc32_init_val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "初始值";
             // 
             // bt_run_crc
             // 
@@ -158,10 +161,12 @@
             this.bt_run_crc.TabIndex = 1;
             this.bt_run_crc.Text = "进行校验";
             this.bt_run_crc.UseVisualStyleBackColor = true;
+            this.bt_run_crc.MouseClick += new System.Windows.Forms.MouseEventHandler(this.bt_run_crc_MouseClick);
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.tb_file_len);
+            this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.label12);
             this.groupBox3.Location = new System.Drawing.Point(12, 41);
             this.groupBox3.Name = "groupBox3";
@@ -172,9 +177,9 @@
             // 
             // tb_file_len
             // 
-            this.tb_file_len.Location = new System.Drawing.Point(53, 14);
+            this.tb_file_len.Location = new System.Drawing.Point(41, 14);
             this.tb_file_len.Name = "tb_file_len";
-            this.tb_file_len.Size = new System.Drawing.Size(125, 21);
+            this.tb_file_len.Size = new System.Drawing.Size(102, 21);
             this.tb_file_len.TabIndex = 1;
             this.tb_file_len.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -183,9 +188,9 @@
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(6, 17);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(41, 12);
+            this.label12.Size = new System.Drawing.Size(29, 12);
             this.label12.TabIndex = 0;
-            this.label12.Text = "长  度";
+            this.label12.Text = "长度";
             // 
             // label13
             // 
@@ -330,11 +335,29 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "CRC_16";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(149, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(29, 12);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Byte";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(13, 175);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(775, 182);
+            this.richTextBox1.TabIndex = 4;
+            this.richTextBox1.Text = "常用多项式及初始值：\nCRC32\t\t初始值\t\t\t多项式\n\t\tFFFFFFFF\t\t\t84C11DB7";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 174);
+            this.ClientSize = new System.Drawing.Size(800, 369);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -343,6 +366,7 @@
             this.Controls.Add(this.bt_run_crc);
             this.Controls.Add(this.bt_file_sel);
             this.Controls.Add(this.tb_file);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "FormMain";
             this.Text = "BinCRC";
             this.groupBox_CRC32.ResumeLayout(false);
@@ -389,6 +413,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tb_crc16_val;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
 
