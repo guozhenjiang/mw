@@ -22,8 +22,8 @@ namespace BinCRC
         string Str_CRC32_Val;
 
         UInt32 CRC32_InitVal;
-        UInt32 CRC32_Poly;
-        UInt32 CRC32_Val;
+        long CRC32_Poly;
+        long CRC32_Val;
         
         // CRC16
         string Str_CRC16_InitVal;
@@ -80,29 +80,36 @@ namespace BinCRC
                 //CRC32_InitVal = Convert.ToUInt32(tb_crc32_init_val.Text);
                 //CRC32_Poly = Convert.ToUInt32(tb_crc32_poly);
                 CRC32_InitVal = UInt32.Parse(tb_crc32_init_val.Text, System.Globalization.NumberStyles.HexNumber);
-                CRC32_Poly = UInt32.Parse(tb_crc32_poly.Text, System.Globalization.NumberStyles.HexNumber);
+                CRC32_Poly = long.Parse(tb_crc32_poly.Text, System.Globalization.NumberStyles.HexNumber);
 
                 // 进行校验计算
                 FileStream file_stream = new FileStream(Str_FilePathNameExt, FileMode.Open);
                 System.IO.BinaryReader file_read = new System.IO.BinaryReader(file_stream);
 
-                long i, j;
-                UInt32 new_byte;
+                long i, j, k;
+                UInt32[] byte_cache = new UInt32[4];
 
                 CRC32_Val = CRC32_InitVal;
                 
-                for(i=0; i< FileLen; i++)
+                for(i=0; i< FileLen; i+=4)
                 {
-                    new_byte = file_read.ReadByte();
+                    // 字节顺序从高到低
+                    byte_cache[3] = file_read.ReadByte();
+                    byte_cache[2] = file_read.ReadByte();
+                    byte_cache[1] = file_read.ReadByte();
+                    byte_cache[0] = file_read.ReadByte();
 
-                    CRC32_Val ^= new_byte << 24;
-
-                    for(j=0; j<8; j++)
+                    for(k=0; k<4; k++)
                     {
-                        if (0x80000000 == (CRC32_Val & 0x80000000))
-                            CRC32_Val = (CRC32_Val << 1) ^ CRC32_Poly;
-                        else
-                            CRC32_Val <<= 1;
+                        CRC32_Val ^= byte_cache[k] << 24;
+
+                        for (j = 0; j < 8; j++)
+                        {
+                            if (0x80000000 == (CRC32_Val & 0x80000000))
+                                CRC32_Val = (CRC32_Val << 1) ^ CRC32_Poly;
+                            else
+                                CRC32_Val <<= 1;
+                        }
                     }
                 }
 
@@ -113,3 +120,4 @@ namespace BinCRC
         }
     }
 }
+

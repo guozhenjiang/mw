@@ -41,6 +41,7 @@
             this.bt_run_crc = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tb_file_len = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -57,7 +58,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tb_crc16_val = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox_CRC32.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -182,6 +182,15 @@
             this.tb_file_len.Size = new System.Drawing.Size(102, 21);
             this.tb_file_len.TabIndex = 1;
             this.tb_file_len.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(149, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(29, 12);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Byte";
             // 
             // label12
             // 
@@ -335,22 +344,13 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "CRC_16";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(149, 17);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(29, 12);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "Byte";
-            // 
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(13, 175);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(775, 182);
             this.richTextBox1.TabIndex = 4;
-            this.richTextBox1.Text = "常用多项式及初始值：\nCRC32\t\t初始值\t\t\t多项式\n\t\tFFFFFFFF\t\t\t84C11DB7";
+            this.richTextBox1.Text = "常用多项式及初始值：\nCRC32\t\t初始值\t\t\t\t多项式\n\t\tFFFFFFFF\t\t\t104C11DB7";
             // 
             // FormMain
             // 
