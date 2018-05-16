@@ -46,6 +46,8 @@ namespace BinCRC
         public FormMain()
         {
             InitializeComponent();
+            tb_crc32_init_val.Text = "FFFFFFFF";
+            tb_crc32_poly.Text = "104C11DB7";
         }
 
         private void bt_file_sel_MouseClick(object sender, MouseEventArgs e)

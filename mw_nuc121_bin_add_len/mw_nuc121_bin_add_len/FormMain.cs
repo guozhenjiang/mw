@@ -14,23 +14,130 @@ namespace mw_nuc121_bin_add_len
     public partial class FormMain : Form
     {
         // 要处理的文件的信息
-        string BinRaw_PathNameAll;      // 路径及名称
-        string BinRaw_PathOnly;
+        string BinRaw_PathNameExt;      // 原文件 路径、名称、扩展名
+        string BinRaw_Path;             // 原文件 路径
+        string BinRaw_Name;             // 原文件 名称(不含后缀)
+        string BinRaw_Ext;              // 原文件 后缀
+        long   BinRaw_Len;              // 原文件 大小(内容字节数)
+        string BinRaw_Len_10;           // 原文件 大小(字符串 十进制)
+        string BinRaw_Len_16;           // 原文件 大小(字符串 十六进制)
+        
+        string BinNew_PathNameExt;      // 新文件 路径、名称、扩展名
+        string BinNew_Path;             // 新文件 路径
+        string BinNew_Name;             // 新文件 名称(不含后缀)
+        string BinNew_Ext;              // 新文件 后缀
+        long   BinNew_Len;              // 新文件 大小(内容字节数)
 
-        string BinRaw_NameWithoutExt;   // 名称
-        long BinRaw_Len;                // 大小
-
-        string BinNew_PathNameExt;      // 保存文件的路径、名称、及扩展名
+        string TimeStamp;               // 当前时间
+        string StrAddLen;
 
         byte[] BinLen = new byte[4];
-        byte[] BinRaw = new byte[] { };
 
-        BinaryWriter Bin_W;
-        BinaryReader Bin_R;
+        UInt32 i;
 
         public FormMain()
         {
             InitializeComponent();
+        }
+
+        private void Show_Bin_To_RitchTextBox(string File_PathNameExt, RichTextBox richTextBox)
+        {
+            // 获取文件内容
+            FileStream fileStream = new FileStream(File_PathNameExt, FileMode.Open);
+            long fileLen = fileStream.Length;
+            byte[] fileData = new byte[fileLen];
+            byte[] fileData_16 = new byte[16];      // 每次最多读取16字节进行处理
+
+            fileStream.Read(fileData, 0, (int)fileLen);
+            fileStream.Close();
+
+            // 显示文件内容
+            richTextBox.Text = "";
+            string Str_NewByte;
+
+            for (i = 0; i < fileLen; i++)
+            {
+                if (0 == i % 16)
+                {
+                    if (i > 0)
+                        richTextBox.AppendText("\r\n");
+                    richTextBox.AppendText(i.ToString("X8") + ":");
+                }
+
+                Str_NewByte = " ";
+
+                if (fileData[i] < 0x10)
+                    Str_NewByte += "0";
+
+                Str_NewByte += Convert.ToString(fileData[i], 16).ToUpper();
+
+                richTextBox.AppendText(Str_NewByte);
+            }
+        }
+
+        private void Update_BinNew_CRC32(string File_PathNameExt)
+        {
+            UInt32 CRC32_InitVal = 0xFFFFFFFF;
+            long CRC32_Poly = 0x104C11DB7;
+            long CRC32_Val;
+
+            // 进行校验计算
+            FileStream file_stream = new FileStream(File_PathNameExt, FileMode.Open);
+            System.IO.BinaryReader file_read = new System.IO.BinaryReader(file_stream);
+
+            long i, j, k;
+            UInt32[] byte_cache = new UInt32[4];
+
+            CRC32_Val = CRC32_InitVal;
+
+            for (i = 0; i < file_stream.Length; i += 4)
+            {
+                // 字节顺序从高到低
+                byte_cache[3] = file_read.ReadByte();
+                byte_cache[2] = file_read.ReadByte();
+                byte_cache[1] = file_read.ReadByte();
+                byte_cache[0] = file_read.ReadByte();
+
+                for (k = 0; k < 4; k++)
+                {
+                    CRC32_Val ^= byte_cache[k] << 24;
+
+                    for (j = 0; j < 8; j++)
+                    {
+                        if (0x80000000 == (CRC32_Val & 0x80000000))
+                            CRC32_Val = (CRC32_Val << 1) ^ CRC32_Poly;
+                        else
+                            CRC32_Val <<= 1;
+                    }
+                }
+            }
+
+            file_stream.Close();
+
+            textBox_BinNewCRC.Text = Convert.ToString(CRC32_Val, 16).ToUpper();
+        }
+
+        private void Force_Same_Scroll(CheckBox checkBox, RichTextBox richTextBox_Act, RichTextBox richTextBox_Follow)
+        {
+            if (checkBox.Checked)
+            {
+                // 获取当前窗口行号//获得当前坐标信息
+                Point p = richTextBox_Act.Location;
+                int crntFirstIndex = richTextBox_Act.GetCharIndexFromPosition(p);
+                int crntFirstLine = richTextBox_Act.GetLineFromCharIndex(crntFirstIndex);
+
+                // 设置另外一个窗口滚动
+                try
+                {
+                    richTextBox_Follow.SelectionStart = richTextBox_Follow.GetFirstCharIndexFromLine(crntFirstLine - 1);
+                    richTextBox_Follow.SelectionLength = 0;
+                    richTextBox_Follow.ScrollToCaret();
+                }
+                catch
+                {
+
+                }
+            }
         }
 
         private void button_FileSel_MouseClick(object sender, MouseEventArgs e)
@@ -40,69 +147,28 @@ namespace mw_nuc121_bin_add_len
 
             if(openFileDialog_SelBin.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                BinRaw_PathNameAll = openFileDialog_SelBin.FileName;       // 获取路径及文件名
-                textBox_BinName.Text = BinRaw_PathNameAll;                 // 提示路径及文件名
-                FileInfo BinRaw_Info = new FileInfo(BinRaw_PathNameAll);   // 获取文件信息
+                // 获取原文件信息
+                BinRaw_PathNameExt = openFileDialog_SelBin.FileName;
 
-                BinRaw_NameWithoutExt = System.IO.Path.GetFileNameWithoutExtension(BinRaw_PathNameAll);    // 获取不带路径和后缀的文件名
-                BinRaw_Len = BinRaw_Info.Length;
-                BinRaw_PathOnly = System.IO.Path.GetDirectoryName(BinRaw_PathNameAll);
+                FileInfo BinRaw_Info = new FileInfo(BinRaw_PathNameExt);    // 获取文件信息
 
-                BinNew_PathNameExt = BinRaw_PathOnly + "\\" + BinRaw_NameWithoutExt + "_AddLen.bin";
+                BinRaw_Path = System.IO.Path.GetDirectoryName(BinRaw_PathNameExt);
+                BinRaw_Name = System.IO.Path.GetFileNameWithoutExtension(BinRaw_PathNameExt);
+                BinRaw_Ext  = System.IO.Path.GetExtension(BinRaw_PathNameExt);
+                BinRaw_Len  = BinRaw_Info.Length;
+                BinRaw_Len_10 = BinRaw_Len.ToString();
+                BinRaw_Len_16 = "0x" + Convert.ToString(BinRaw_Len, 16).ToUpper();
 
-                richTextBox_Bin.AppendText("\r\n文件名称:" + BinRaw_NameWithoutExt + "\r\n");   // 显示文件名
-                richTextBox_Bin.AppendText("文件长度:" + BinRaw_Len + "\r\n");                  // 显示文件大小
-                richTextBox_Bin.AppendText("原路径:" + BinRaw_PathOnly + "\r\n");             // 显示文件路径
-                richTextBox_Bin.AppendText("新文件:" + BinNew_PathNameExt + "\r\n");           // 新文件信息
+                textBox_BinRaw_PathNameExt.Text = BinRaw_PathNameExt;
+                richTextBox_Dbg.AppendText("\r\n");
+                richTextBox_Dbg.AppendText("BinRaw_PathNameExt:" + BinRaw_PathNameExt + "\r\n");
+                richTextBox_Dbg.AppendText("BinRaw_Path:" + BinRaw_Path + "\r\n");
+                richTextBox_Dbg.AppendText("BinRaw_Name:" + BinRaw_Name + "\r\n");
+                richTextBox_Dbg.AppendText("BinRaw_Ext:" + BinRaw_Ext + "\r\n");
+                richTextBox_Dbg.AppendText("BinRaw_Len:"+ BinRaw_Len_10 + " " + BinRaw_Len_16 + "\r\n");
+                richTextBox_Dbg.ScrollToCaret();
 
-                BinLen[0] = (byte)((BinRaw_Len & 0x000000FF) >> 0);
-                BinLen[1] = (byte)((BinRaw_Len & 0x0000FF00) >> 8);
-                BinLen[2] = (byte)((BinRaw_Len & 0x00FF0000) >> 16);
-                BinLen[3] = (byte)((BinRaw_Len & 0xFF000000) >> 24);
-
-                //BinLen[0] = 0x12;
-                //BinLen[1] = 0x34;
-                //BinLen[2] = 0x56;
-                //BinLen[3] = 0x78;
-
-                richTextBox_Bin.AppendText("Add Len:");
-                string str_bin_len_x = "";
-                for (int i=0; i<4; i++)
-                {
-                    str_bin_len_x = Convert.ToString(BinLen[i], 16);
-                    str_bin_len_x = str_bin_len_x.ToUpper();
-                    richTextBox_Bin.AppendText(str_bin_len_x);
-                }
-                richTextBox_Bin.AppendText("\r\n");
-
-                richTextBox_Bin.Text = "";
-
-
-                byte[] RawBinData = new byte[BinRaw_Len];
-                string str_byte_x;
-
-                System.IO.FileStream fs = new System.IO.FileStream(BinRaw_PathNameAll, System.IO.FileMode.Open);
-
-                System.IO.BinaryReader read = new System.IO.BinaryReader(fs);
-
-                for (UInt32 i = 0; i < fs.Length; i++)
-                {
-                    if ((i > 0) && (0 == i % 16))
-                        richTextBox_Bin.AppendText("\r\n");
-
-                    str_byte_x = "";
-                    RawBinData[i] = read.ReadByte();
-
-                    if (RawBinData[i] < 0x10)
-                        str_byte_x += "0";
-
-                    str_byte_x += Convert.ToString(RawBinData[i], 16);
-                    str_byte_x = str_byte_x.ToUpper() + " ";
-
-                    richTextBox_Bin.AppendText(str_byte_x);
-                }
-
-                fs.Close();
+                Show_Bin_To_RitchTextBox(BinRaw_PathNameExt, richTextBox_BinRaw);
 
                 button_AddLen.Enabled = true;
             }
@@ -110,55 +176,68 @@ namespace mw_nuc121_bin_add_len
 
         private void button_AddLen_Click(object sender, EventArgs e)
         {
-            FileStream fs_raw = new FileStream(BinRaw_PathNameAll, FileMode.Open);
-            System.IO.BinaryReader read_raw = new System.IO.BinaryReader(fs_raw);
 
-            FileStream fs = new FileStream(BinNew_PathNameExt, FileMode.OpenOrCreate);
-            StreamWriter sw = new StreamWriter(fs);
-            System.IO.BinaryReader read = new System.IO.BinaryReader(fs);
+            // 生成新的文件信息
+            BinNew_Path = BinRaw_Path;
+            BinNew_Name = BinRaw_Name;
+            BinNew_Ext = BinRaw_Ext;
+            BinNew_Len = BinRaw_Len + 4;
 
-            Int32 i;
+            TimeStamp = DateTime.Now.ToString();
+            TimeStamp = TimeStamp.Replace("/", "_");
+            TimeStamp = TimeStamp.Replace(":", "");
+            TimeStamp = TimeStamp.Replace(" ", "_");
 
-            // 写入长度信息
-            for (i = 0; i < 4; i++)
-                sw.Write(BinLen[i]);
+            richTextBox_Dbg.AppendText("\r\n");
+            BinNew_PathNameExt = BinNew_Path + "\\" + BinNew_Name + "-" + TimeStamp + "-AddLen-" + BinRaw_Len_10 + "-" + BinRaw_Len_16 + BinNew_Ext;
+            richTextBox_Dbg.AppendText("BinNew_PathNameExt:" + BinNew_PathNameExt + "\r\n");
+            richTextBox_Dbg.ScrollToCaret();
 
-            // 写入原来的文件
-            for (i = 0; i < fs_raw.Length; i++)
-                sw.Write(read_raw.ReadByte());
+            BinLen[0] = (byte)((BinRaw_Len & 0x000000FF) >> 0);
+            BinLen[1] = (byte)((BinRaw_Len & 0x0000FF00) >> 8);
+            BinLen[2] = (byte)((BinRaw_Len & 0x00FF0000) >> 16);
+            BinLen[3] = (byte)((BinRaw_Len & 0xFF000000) >> 24);
 
-            fs.Flush();
-            fs.Close();
+            StrAddLen = "";
 
-            fs_raw.Close();
-
-            // 清空显示
-            richTextBox_Bin.Text = "";
-
-            FileStream fs2 = new FileStream(BinNew_PathNameExt, FileMode.Open);
-            System.IO.BinaryReader read2 = new System.IO.BinaryReader(fs2);
-
-            string str_byte_x;
-            byte[] NewBinData = new byte[fs2.Length];
-
-            for (i = 0; i < fs2.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
-                if ((i > 0) && (0 == i % 16))
-                    richTextBox_Bin.AppendText("\r\n");
+                if (BinLen[i] < 0x10)
+                    StrAddLen += "0";
 
-                str_byte_x = "";
-                NewBinData[i] = read2.ReadByte();
-
-                if (NewBinData[i] < 0x10)
-                    str_byte_x += "0";
-
-                str_byte_x += Convert.ToString(NewBinData[i], 16);
-                str_byte_x = str_byte_x.ToUpper() + " ";
-
-                richTextBox_Bin.AppendText(str_byte_x);
+                StrAddLen += Convert.ToString(BinLen[i], 16).ToUpper();
+                StrAddLen += " ";
             }
+            richTextBox_Dbg.AppendText("Add Len:" + StrAddLen + "\r\n");
+            // 获取原文件内容
+            byte[] BinRaw_Data = new byte[BinRaw_Len];
+            FileStream FileStream_BinRaw = new FileStream(BinRaw_PathNameExt, FileMode.Open);
 
-            fs.Close();
+            FileStream_BinRaw.Read(BinRaw_Data, 0, (int)BinRaw_Len);
+            FileStream_BinRaw.Close();
+
+            // 新文件
+            FileStream FileStream_BinNew = new FileStream(BinNew_PathNameExt, FileMode.Create);
+
+            FileStream_BinNew.Write(BinLen, 0, 4);
+            FileStream_BinNew.Write(BinRaw_Data, 0, (int)BinRaw_Len);
+
+            FileStream_BinNew.Flush();
+            FileStream_BinNew.Close();
+
+            Show_Bin_To_RitchTextBox(BinNew_PathNameExt, richTextBox_BinNew);
+
+            Update_BinNew_CRC32(BinNew_PathNameExt);
+        }
+
+        private void richTextBox_BinRaw_VScroll(object sender, EventArgs e)
+        {
+            Force_Same_Scroll(checkBox_RolSame, richTextBox_BinRaw, richTextBox_BinNew);
+        }
+
+        private void richTextBox_BinNew_VScroll(object sender, EventArgs e)
+        {
+            Force_Same_Scroll(checkBox_RolSame, richTextBox_BinNew, richTextBox_BinRaw);
         }
     }
 }

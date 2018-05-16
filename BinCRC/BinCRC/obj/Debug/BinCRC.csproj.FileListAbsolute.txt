@@ -1,0 +1,10 @@
+E:\github\mw\BinCRC\BinCRC\bin\Debug\BinCRC.exe.config
+E:\github\mw\BinCRC\BinCRC\bin\Debug\BinCRC.exe
+E:\github\mw\BinCRC\BinCRC\bin\Debug\BinCRC.pdb
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.csprojResolveAssemblyReference.cache
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.FormMain.resources
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.Properties.Resources.resources
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.csproj.GenerateResource.cache
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.csproj.CoreCompileInputs.cache
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.exe
+E:\github\mw\BinCRC\BinCRC\obj\Debug\BinCRC.pdb
